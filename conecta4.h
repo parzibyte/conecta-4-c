@@ -1,0 +1,16 @@
+#define FILAS 9
+#define COLUMNAS 9
+#define TAMANIO_MATRIZ sizeof(char)*FILAS*COLUMNAS
+#define JUGADOR_1 'o'
+#define JUGADOR_2 'x'
+#define ESPACIO_VACIO ' '
+#define FILA_NO_ENCONTRADA -1
+#define ERROR_COLUMNA_LLENA 2
+#define ERROR_FILA_INVALIDA 4
+#define ERROR_NINGUNO 3
+#define CONECTA 4
+#define CONECTA_ARRIBA 1
+#define CONECTA_DERECHA 2
+#define CONECTA_ABAJO_DERECHA 3
+#define CONECTA_ARRIBA_DERECHA 4
+#define NO_CONECTA 0

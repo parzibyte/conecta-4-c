@@ -21,23 +21,9 @@ ____________________________________
 */
 #include <stdio.h>
 #include <string.h>
+#include "conteo.c"
+#include "conecta4.h"
 
-#define FILAS 9
-#define COLUMNAS 9
-#define TAMANIO_MATRIZ sizeof(char)*FILAS*COLUMNAS
-#define JUGADOR_1 'o'
-#define JUGADOR_2 'x'
-#define ESPACIO_VACIO ' '
-#define FILA_NO_ENCONTRADA -1
-#define ERROR_COLUMNA_LLENA 2
-#define ERROR_FILA_INVALIDA 4
-#define ERROR_NINGUNO 3
-#define CONECTA 4
-#define CONECTA_ARRIBA 1
-#define CONECTA_DERECHA 2
-#define CONECTA_ABAJO_DERECHA 3
-#define CONECTA_ARRIBA_DERECHA 4
-#define NO_CONECTA 0
 
 int hacercosa(char tableroOriginal[FILAS][COLUMNAS]) {
     char matriz[FILAS][COLUMNAS];
@@ -103,95 +89,6 @@ int dibujarTablero(char tablero[FILAS][COLUMNAS]) {
         printf("\n");
     }
     return 0;
-}
-
-
-
-int contarArriba(int x, int y, char jugador, char tablero[FILAS][COLUMNAS]) {
-    int yInicio = (y - CONECTA >= 0) ? y - CONECTA + 1 : 0;
-    int contador = 0;
-    for (; yInicio <= y; yInicio++) {
-        if (tablero[yInicio][x] == jugador) {
-            contador++;
-        } else {
-            contador = 0;
-        }
-    }
-    return contador;
-}
-
-int contarDerecha(int x, int y, char jugador, char tablero[FILAS][COLUMNAS]) {
-    int xFin = (x + CONECTA < COLUMNAS) ? x + CONECTA - 1 : COLUMNAS - 1;
-    int contador = 0;
-    for (; x <= xFin; x++) {
-        if (tablero[y][x] == jugador) {
-            contador++;
-        } else {
-            contador = 0;
-        }
-    }
-    return contador;
-}
-
-int contarArribaDerecha(int x, int y, char jugador, char tablero[FILAS][COLUMNAS]) {
-    int xFin = (x + CONECTA < COLUMNAS) ? x + CONECTA - 1 : COLUMNAS - 1;
-    int yInicio = (y - CONECTA >= 0) ? y - CONECTA + 1 : 0;
-    int contador = 0;
-    while (x <= xFin && yInicio <= y) {
-        if (tablero[y][x] == jugador) {
-            contador++;
-        } else {
-            contador = 0;
-        }
-        x++;
-        y--;
-    }
-    return contador;
-}
-
-int contarAbajoDerecha(int x, int y, char jugador, char tablero[FILAS][COLUMNAS]) {
-    int xFin = (x + CONECTA < COLUMNAS) ? x + CONECTA - 1 : COLUMNAS - 1;
-    int yFin = (y + CONECTA < FILAS) ? y + CONECTA - 1 : FILAS - 1;
-    int contador = 0;
-    while (x <= xFin && y <= yFin) {
-        if (tablero[y][x] == jugador) {
-            contador++;
-        } else {
-            contador = 0;
-        }
-        x++;
-        y++;
-    }
-    return contador;
-}
-
-int ganador(char jugador, char tablero[FILAS][COLUMNAS]) {
-/*
- * Solo necesitamos
- * Arriba
- * Derecha
- * Arriba derecha
- * Abajo derecha
- *
- * */
-    for (int y = 0; y < FILAS; y++) {
-        for (int x = 0; x < COLUMNAS; x++) {
-            int conteoArriba = contarArriba(x, y, jugador, tablero);
-            if (conteoArriba >= CONECTA) {
-                return CONECTA_ARRIBA;
-            }
-            if (contarDerecha(x, y, jugador, tablero) >= CONECTA) {
-                return CONECTA_DERECHA;
-            }
-            if (contarArribaDerecha(x, y, jugador, tablero) >= CONECTA) {
-                return CONECTA_ARRIBA_DERECHA;
-            }
-            if (contarAbajoDerecha(x, y, jugador, tablero) >= CONECTA) {
-                return CONECTA_ABAJO_DERECHA;
-            }
-        }
-    }
-    return NO_CONECTA;
 }
 
 

@@ -21,18 +21,11 @@ ____________________________________
 */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h> // rand y RAND_MAX
+#include <unistd.h> // getpid
 #include "conteo.c"
 #include "conecta4.h"
 
-
-int hacercosa(char tableroOriginal[FILAS][COLUMNAS]) {
-    char matriz[FILAS][COLUMNAS];
-    memcpy(matriz, tableroOriginal, TAMANIO_MATRIZ);
-    printf("Inside function: %d\n", matriz[0][0]);
-    matriz[0][0] = '_';
-    printf("Inside function (later): %d\n", matriz[0][0]);
-    return 0;
-}
 
 int obtenerFilaDesocupada(int columna, char tablero[FILAS][COLUMNAS]) {
     for (int i = FILAS - 1; i >= 0; i--) {
@@ -102,26 +95,187 @@ int esEmpate(char tablero[FILAS][COLUMNAS]) {
     return 1;
 }
 
-int main() {
+char obtenerOponente(char jugador) {
+    if (jugador == JUGADOR_1) {
+        return JUGADOR_2;
+    } else {
+        return JUGADOR_1;
+    }
+}
+
+void clonarMatriz(char tableroOriginal[FILAS][COLUMNAS], char destino[FILAS][COLUMNAS]) {
+    memcpy(destino, tableroOriginal, TAMANIO_MATRIZ);
+}
+
+int obtenerColumnaGanadora(char jugador, char tableroOriginal[FILAS][COLUMNAS]) {
     char tablero[FILAS][COLUMNAS];
-    int bandera = 1;
+    for (int i = 0; i < COLUMNAS; i++) {
+        clonarMatriz(tableroOriginal, tablero);
+        int resultado = colocarPieza(jugador, i, tablero);
+        if (resultado == ERROR_NINGUNO) {
+            int gana = ganador(jugador, tablero);
+            if (gana != NO_CONECTA) {
+                return i;
+            }
+        }
+
+    }
+    return COLUMNA_GANADORA_NO_ENCONTRADA;
+}
+
+int obtenerPrimeraFilaLlena(int columna, char tablero[FILAS][COLUMNAS]) {
+    for (int i = 0; i < FILAS; ++i) {
+        if (tablero[i][columna] != ESPACIO_VACIO) {
+            return i;
+        }
+    }
+    return FILA_NO_ENCONTRADA;
+}
+
+/*
+ * Los dos últimos apuntadores son porque no podemos regresar dos variables
+ * */
+void obtenerColumnaEnLaQueSeObtieneMayorPuntaje(char jugador, char tableroOriginal[FILAS][COLUMNAS], int *conteo,
+                                                int *indice) {
+
+    int conteoMayor = 0,
+            indiceColumnaConConteoMayor = -1;
+    char tablero[FILAS][COLUMNAS];
+    for (int i = 0; i < COLUMNAS; ++i) {
+        clonarMatriz(tableroOriginal, tablero);
+        int estado = colocarPieza(jugador, i, tablero);
+        if (estado == ERROR_NINGUNO) {
+            int filaDePiezaRecienColocada = obtenerPrimeraFilaLlena(i, tablero);
+            if (filaDePiezaRecienColocada != FILA_NO_ENCONTRADA) {
+                int c = contarArriba(i, filaDePiezaRecienColocada, jugador, tablero);
+                if (c > conteoMayor) {
+                    conteoMayor = c;
+                    indiceColumnaConConteoMayor = i;
+                }
+                c = contarArribaDerecha(i, filaDePiezaRecienColocada, jugador, tablero);
+                if (c > conteoMayor) {
+                    conteoMayor = c;
+                    indiceColumnaConConteoMayor = i;
+                }
+                c = contarDerecha(i, filaDePiezaRecienColocada, jugador, tablero);
+                if (c > conteoMayor) {
+                    conteoMayor = c;
+                    indiceColumnaConConteoMayor = i;
+                }
+                c = contarAbajoDerecha(i, filaDePiezaRecienColocada, jugador, tablero);
+                if (c > conteoMayor) {
+                    conteoMayor = c;
+                    indiceColumnaConConteoMayor = i;
+                }
+            }
+        }
+    }
+    *conteo = conteoMayor;
+    *indice = indiceColumnaConConteoMayor;
+}
+
+
+int aleatorio_en_rango(int minimo, int maximo) {
+    return minimo + rand() / (RAND_MAX / (maximo - minimo + 1) + 1);
+}
+
+int obtenerColumnaAleatoria(char jugador, char tableroOriginal[FILAS][COLUMNAS]) {
+    while (1) {
+        char tablero[FILAS][COLUMNAS];
+        clonarMatriz(tableroOriginal, tablero);
+        int columna = aleatorio_en_rango(0, COLUMNAS - 1);
+        int resultado = colocarPieza(jugador, columna, tablero);
+        if (resultado == ERROR_NINGUNO) {
+            return columna;
+        }
+    }
+}
+
+int obtenerColumnaCentral(char jugador, char tableroOriginal[FILAS][COLUMNAS]) {
+    char tablero[FILAS][COLUMNAS];
+    clonarMatriz(tableroOriginal, tablero);
+    int mitad = (COLUMNAS - 1) / 2;
+    int resultado = colocarPieza(jugador, mitad, tablero);
+    if (resultado == ERROR_NINGUNO) {
+        return mitad;
+    }
+    return COLUMNA_GANADORA_NO_ENCONTRADA;
+}
+
+int elegirColumnaCpu(char jugador, char tablero[FILAS][COLUMNAS]) {
+    // Voy a comprobar si puedo ganar...
+    int posibleColumnaGanadora = obtenerColumnaGanadora(jugador, tablero);
+    if (posibleColumnaGanadora != COLUMNA_GANADORA_NO_ENCONTRADA) {
+        printf("*elijo ganar*\n");
+        return posibleColumnaGanadora;
+    }
+    // Si no, voy a comprobar si mi oponente gana con el siguiente movimiento, para evitarlo
+    char oponente = obtenerOponente(jugador);
+    int posibleColumnaGanadoraDeOponente = obtenerColumnaGanadora(oponente, tablero);
+    if (posibleColumnaGanadoraDeOponente != COLUMNA_GANADORA_NO_ENCONTRADA) {
+        printf("*elijo evitar que mi oponente gane*\n");
+        return posibleColumnaGanadoraDeOponente;
+    }
+    // En caso de que nadie pueda ganar en el siguiente movimiento, buscaré en dónde se obtiene el mayor
+    // puntaje al colocar la pieza
+    int conteoCpu, columnaCpu;
+    obtenerColumnaEnLaQueSeObtieneMayorPuntaje(jugador, tablero, &conteoCpu, &columnaCpu);
+    int conteoOponente, columnaOponente;
+    obtenerColumnaEnLaQueSeObtieneMayorPuntaje(oponente, tablero, &conteoOponente, &columnaOponente);
+    if (conteoOponente > conteoCpu) {
+        printf("*elijo quitarle el puntaje a mi oponente*\n");
+        return columnaOponente;
+    } else if (conteoCpu > 1) {
+        printf("*elijo colocarla en donde obtengo un mayor puntaje*\n");
+        return columnaCpu;
+    }
+    // Si no, regresar la central por si está desocupada
+
+    int columnaCentral = obtenerColumnaCentral(jugador, tablero);
+    if (columnaCentral != COLUMNA_GANADORA_NO_ENCONTRADA) {
+        printf("*elijo ponerla en el centro*\n");
+        return columnaCentral;
+    }
+    // Finalmente, devolver la primera disponible de manera aleatoria
+    int columna = obtenerColumnaAleatoria(jugador, tablero);
+    if (columna != FILA_NO_ENCONTRADA) {
+        printf("*elijo la primera vacía aleatoria*\n");
+        return columna;
+    }
+    printf("Esto no debería suceder\n");
+    return 0;
+}
+
+int main() {
+    // Hay que alimentar a rand, solamente una vez (seed rand)
+    srand(getpid());
+    char tablero[FILAS][COLUMNAS];
+    int turnoDelJugador2 = 1;
+    int juegaCpu;
+    printf("¿Jugador Vs Jugador [0] o Jugador vs CPU[1]? ");
+    scanf("%d", &juegaCpu);
     limpiarTablero(tablero);
     while (1) {
         char jugadorActual;
-        if (bandera) {
+        if (turnoDelJugador2) {
             jugadorActual = JUGADOR_1;
-            bandera = 0;
+            turnoDelJugador2 = 0;
         } else {
             jugadorActual = JUGADOR_2;
-            bandera = 1;
+            turnoDelJugador2 = 1;
         }
-        printf("Turno del jugador %c\n", jugadorActual);
-        dibujarTablero(tablero);
         int columna;
-        printf("Escribe la columna: ");
-        scanf("%d", &columna);
-        // Necesitamos índices de arreglos
-        columna--;
+        printf("\nTurno del jugador %c\n", jugadorActual);
+        if (juegaCpu && turnoDelJugador2) {
+            printf("CPU pensando...\n");
+            columna = elegirColumnaCpu(jugadorActual, tablero);
+        } else {
+            dibujarTablero(tablero);
+            printf("Escribe la columna: ");
+            scanf("%d", &columna);
+            // Necesitamos índices de arreglos
+            columna--;
+        }
         int estado = colocarPieza(jugadorActual, columna, tablero);
         if (estado == ERROR_COLUMNA_LLENA) {
             printf("Error: columna llena");

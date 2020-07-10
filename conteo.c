@@ -90,8 +90,10 @@ int ganador(char jugador, char tablero[FILAS][COLUMNAS]) {
  * Abajo derecha
  *
  * */
-    for (int y = 0; y < FILAS; y++) {
-        for (int x = 0; x < COLUMNAS; x++) {
+    int y;
+    for (y = 0; y < FILAS; y++) {
+        int x;
+        for (x = 0; x < COLUMNAS; x++) {
             int conteoArriba = contarArriba(x, y, jugador, tablero);
             if (conteoArriba >= CONECTA) {
                 return CONECTA_ARRIBA;

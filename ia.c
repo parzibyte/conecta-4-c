@@ -23,6 +23,7 @@ excepto si este es un proyecto de un estudiante.
 */
 #include "conecta4.h"
 #include <string.h>
+#include <stdio.h>
 
 void clonarMatriz(char tableroOriginal[FILAS][COLUMNAS], char destino[FILAS][COLUMNAS]) {
     memcpy(destino, tableroOriginal, TAMANIO_MATRIZ);
@@ -30,7 +31,8 @@ void clonarMatriz(char tableroOriginal[FILAS][COLUMNAS], char destino[FILAS][COL
 
 int obtenerColumnaGanadora(char jugador, char tableroOriginal[FILAS][COLUMNAS]) {
     char tablero[FILAS][COLUMNAS];
-    for (int i = 0; i < COLUMNAS; i++) {
+    int i;
+    for (i = 0; i < COLUMNAS; i++) {
         clonarMatriz(tableroOriginal, tablero);
         int resultado = colocarPieza(jugador, i, tablero);
         if (resultado == ERROR_NINGUNO) {
@@ -44,7 +46,8 @@ int obtenerColumnaGanadora(char jugador, char tableroOriginal[FILAS][COLUMNAS]) 
 }
 
 int obtenerPrimeraFilaLlena(int columna, char tablero[FILAS][COLUMNAS]) {
-    for (int i = 0; i < FILAS; ++i) {
+    int i;
+    for (i = 0; i < FILAS; ++i) {
         if (tablero[i][columna] != ESPACIO_VACIO) {
             return i;
         }
@@ -61,7 +64,8 @@ void obtenerColumnaEnLaQueSeObtieneMayorPuntaje(char jugador, char tableroOrigin
     int conteoMayor = 0,
             indiceColumnaConConteoMayor = -1;
     char tablero[FILAS][COLUMNAS];
-    for (int i = 0; i < COLUMNAS; ++i) {
+    int i;
+    for (i = 0; i < COLUMNAS; ++i) {
         clonarMatriz(tableroOriginal, tablero);
         int estado = colocarPieza(jugador, i, tablero);
         if (estado == ERROR_NINGUNO) {

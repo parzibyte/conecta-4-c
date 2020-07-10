@@ -22,6 +22,7 @@ Creado por Parzibyte (https://parzibyte.me). Este encabezado debe mantenerse int
 excepto si este es un proyecto de un estudiante.
 */
 #include "conecta4.h"
+#include <stdlib.h> // rand y RAND_MAX
 
 char obtenerOponente(char jugador) {
     if (jugador == JUGADOR_1) {

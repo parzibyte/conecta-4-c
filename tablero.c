@@ -22,9 +22,11 @@ Creado por Parzibyte (https://parzibyte.me). Este encabezado debe mantenerse int
 excepto si este es un proyecto de un estudiante.
 */
 #include "conecta4.h"
+#include <stdio.h>
 
 int obtenerFilaDesocupada(int columna, char tablero[FILAS][COLUMNAS]) {
-    for (int i = FILAS - 1; i >= 0; i--) {
+    int i;
+    for (i = FILAS - 1; i >= 0; i--) {
         if (tablero[i][columna] == ESPACIO_VACIO) {
             return i;
         }
@@ -46,8 +48,10 @@ int colocarPieza(char jugador, int columna, char tablero[FILAS][COLUMNAS]) {
 
 
 void limpiarTablero(char tablero[FILAS][COLUMNAS]) {
-    for (int i = 0; i < FILAS; ++i) {
-        for (int j = 0; j < COLUMNAS; ++j) {
+    int i;
+    for (i = 0; i < FILAS; ++i) {
+        int j;
+        for (j = 0; j < COLUMNAS; ++j) {
             tablero[i][j] = ESPACIO_VACIO;
         }
         printf("\n");
@@ -56,7 +60,8 @@ void limpiarTablero(char tablero[FILAS][COLUMNAS]) {
 
 void dibujarEncabezado(int columnas) {
     printf("\n");
-    for (int i = 0; i < columnas; ++i) {
+    int i;
+    for (i = 0; i < columnas; ++i) {
         printf("|%d", i + 1);
         if (i + 1 >= columnas) {
             printf("|");
@@ -68,8 +73,10 @@ void dibujarEncabezado(int columnas) {
 int dibujarTablero(char tablero[FILAS][COLUMNAS]) {
     dibujarEncabezado(COLUMNAS);
     printf("\n");
-    for (int i = 0; i < FILAS; ++i) {
-        for (int j = 0; j < COLUMNAS; ++j) {
+    int i;
+    for (i = 0; i < FILAS; ++i) {
+        int j;
+        for (j = 0; j < COLUMNAS; ++j) {
             printf("|%c", tablero[i][j]);
             if (j + 1 >= COLUMNAS) {
                 printf("|");
@@ -82,7 +89,8 @@ int dibujarTablero(char tablero[FILAS][COLUMNAS]) {
 
 
 int esEmpate(char tablero[FILAS][COLUMNAS]) {
-    for (int i = 0; i < COLUMNAS; ++i) {
+    int i;
+    for (i = 0; i < COLUMNAS; ++i) {
         int resultado = obtenerFilaDesocupada(i, tablero);
         if (resultado != FILA_NO_ENCONTRADA) {
             return 0;

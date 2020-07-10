@@ -77,3 +77,5 @@ int obtenerColumnaAleatoria(char jugador, char tableroOriginal[FILAS][COLUMNAS])
 int obtenerColumnaCentral(char jugador, char tableroOriginal[FILAS][COLUMNAS]);
 
 int elegirColumnaCpu(char jugador, char tablero[FILAS][COLUMNAS]);
+
+int ganador(char jugador, char tablero[FILAS][COLUMNAS]);

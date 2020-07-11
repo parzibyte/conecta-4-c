@@ -30,54 +30,23 @@ excepto si este es un proyecto de un estudiante.
 #include "tablero.c"
 #include "ia.c"
 #include "misc.c"
+#include "juego.c"
 
 
 int main() {
     // Hay que alimentar a rand, solamente una vez (seed rand)
     srand(getpid());
-    char tablero[FILAS][COLUMNAS];
-    int turnoDelJugador2 = 1;
-    int juegaCpu;
-    printf("¿Jugador Vs Jugador [0] o Jugador vs CPU[1]? ");
-    scanf("%d", &juegaCpu);
-    limpiarTablero(tablero);
-    while (1) {
-        char jugadorActual;
-        if (turnoDelJugador2) {
-            jugadorActual = JUGADOR_1;
-            turnoDelJugador2 = 0;
-        } else {
-            jugadorActual = JUGADOR_2;
-            turnoDelJugador2 = 1;
-        }
-        int columna;
-        printf("\nTurno del jugador %c\n", jugadorActual);
-        if (juegaCpu && turnoDelJugador2) {
-            printf("CPU pensando...\n");
-            columna = elegirColumnaCpu(jugadorActual, tablero);
-        } else {
-            dibujarTablero(tablero);
-            printf("Escribe la columna: ");
-            scanf("%d", &columna);
-            // Necesitamos índices de arreglos
-            columna--;
-        }
-        int estado = colocarPieza(jugadorActual, columna, tablero);
-        if (estado == ERROR_COLUMNA_LLENA) {
-            printf("Error: columna llena");
-        } else if (estado == ERROR_FILA_INVALIDA) {
-            printf("Fila no correcta");
-        } else if (estado == ERROR_NINGUNO) {
-            int g = ganador(jugadorActual, tablero);
-            if (g != NO_CONECTA) {
-                dibujarTablero(tablero);
-                printf("Gana el jugador %c.", jugadorActual);
-                break;
-            } else if (esEmpate(tablero)) {
-                printf("Empate");
-                break;
-            }
-        }
+    printf("*** Conecta 4 ***\n\nBy Parzibyte\n\t\thttps://parzibyte.me/blog\n");
+    int modo;
+    printf("1 => Humano contra Humano\n"
+           "2 => Humano contra CPU\n"
+           "3 => CPU contra CPU\n"
+           "4 => Salir\n"
+           "Seleccione una opción: ");
+    scanf("%d", &modo);
+    if (modo <= 0 || modo > 3) {
+        return 0;
     }
+    jugar(modo);
     return 0;
 }

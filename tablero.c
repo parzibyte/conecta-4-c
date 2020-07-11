@@ -54,7 +54,6 @@ void limpiarTablero(char tablero[FILAS][COLUMNAS]) {
         for (j = 0; j < COLUMNAS; ++j) {
             tablero[i][j] = ESPACIO_VACIO;
         }
-        printf("\n");
     }
 }
 

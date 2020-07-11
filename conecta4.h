@@ -21,11 +21,13 @@ ____________________________________
 Creado por Parzibyte (https://parzibyte.me). Este encabezado debe mantenerse intacto,
 excepto si este es un proyecto de un estudiante.
 */
-#define FILAS 9
-#define COLUMNAS 9
+#define FILAS 6
+#define COLUMNAS 7
 #define TAMANIO_MATRIZ sizeof(char)*FILAS*COLUMNAS
 #define JUGADOR_1 'o'
 #define JUGADOR_2 'x'
+#define JUGADOR_CPU_1 JUGADOR_1
+#define JUGADOR_CPU_2 JUGADOR_2
 #define ESPACIO_VACIO ' '
 #define FILA_NO_ENCONTRADA -1
 #define ERROR_COLUMNA_LLENA 2
@@ -38,6 +40,9 @@ excepto si este es un proyecto de un estudiante.
 #define CONECTA_ARRIBA_DERECHA 4
 #define NO_CONECTA 0
 #define COLUMNA_GANADORA_NO_ENCONTRADA -1
+#define MODO_HUMANO_CONTRA_HUMANO 1
+#define MODO_HUMANO_CONTRA_CPU 2
+#define MODO_CPU_CONTRA_CPU 3
 
 int contarArriba(int x, int y, char jugador, char tablero[FILAS][COLUMNAS]);
 
@@ -79,3 +84,9 @@ int obtenerColumnaCentral(char jugador, char tableroOriginal[FILAS][COLUMNAS]);
 int elegirColumnaCpu(char jugador, char tablero[FILAS][COLUMNAS]);
 
 int ganador(char jugador, char tablero[FILAS][COLUMNAS]);
+
+char elegirJugadorAlAzar();
+
+int solicitarColumnaAJugador();
+
+void jugar(int modo);

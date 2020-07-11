@@ -36,3 +36,22 @@ char obtenerOponente(char jugador) {
 int aleatorio_en_rango(int minimo, int maximo) {
     return minimo + rand() / (RAND_MAX / (maximo - minimo + 1) + 1);
 }
+
+char elegirJugadorAlAzar() {
+    int numero = aleatorio_en_rango(0, 1);
+    if (numero) {
+        return JUGADOR_1;
+    } else {
+        return JUGADOR_2;
+    }
+}
+
+
+int solicitarColumnaAJugador() {
+    int columna = 0;
+    printf("Escribe la columna en donde colocar la pieza: ");
+    scanf("%d", &columna);
+    // Necesitamos índices de arreglos
+    columna--;
+    return columna;
+}

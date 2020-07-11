@@ -57,6 +57,7 @@ void jugar(int modo) {
                 printf("Gana el jugador %c.", jugadorActual);
                 break;
             } else if (esEmpate(tablero)) {
+                dibujarTablero(tablero);
                 printf("Empate");
                 break;
             }
